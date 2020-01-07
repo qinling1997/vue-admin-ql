@@ -6,13 +6,11 @@
         <!----/按钮--->  
 
         <!----表格--->               
-        <el-table :data="employees">
+        <el-table :data="comment">
             <el-table-column fixed="left" prop="id" label="编号"></el-table-column>
-            <el-table-column fixed="left" prop="realname" label="姓名"></el-table-column>
-            <el-table-column prop="gender" label="性别"></el-table-column>
-            <el-table-column prop="telephone" label="联系方式"></el-table-column>
-            <el-table-column prop="idCard" label="身份证号"></el-table-column>
-            <el-table-column prop="bankCard" label="银行卡号"></el-table-column>
+            <el-table-column fixed="left" prop="content" label="评论内容"></el-table-column>
+            <el-table-column prop="commentTime" label="评论时间"></el-table-column>
+            <el-table-column prop="orderId" label="订单编号"></el-table-column>
             <el-table-column fixed="right" label="操作">
             <template v-slot="slot">
                 <a href="" @click.prevent="toDeleteHandler(slot.row.id)">删除</a>
@@ -30,35 +28,15 @@
         <el-dialog :title="title" :visible.sync="visiable" width="60%" >
             <el-form :model="form" label-width="80px"> 
                 
-                <el-form-item label="员工名">
-                    <el-input v-model="form.uesrname"></el-input>
+                <el-form-item label="评论内容">
+                    <el-input v-model="form.content"></el-input>
                 </el-form-item>
 
-                <el-form-item label="密码">
-                    <el-input type="password" v-model="form.password"></el-input>
+                <el-form-item label="评论时间">
+                    <el-input v-model="form.commentTime"></el-input>
                 </el-form-item>
-
-                <el-form-item label="姓名">
-                    <el-input v-model="form.realname"></el-input>
-                </el-form-item>
-
-                <el-form-item label="性别">
-                    <el-radio-group v-model="form.gender">   
-                          <el-radio label="男">男</el-radio>     
-                          <el-radio label="女">女</el-radio>     
-                          </el-radio-group>
-                </el-form-item>
-
-                <el-form-item label="手机号">
-                    <el-input  v-model="form.telephone"></el-input>
-                </el-form-item>
-
-                <el-form-item label="身份证号">
-                    <el-input  v-model="form.idCard"></el-input>
-                </el-form-item>
-
-                <el-form-item label="银行卡号">
-                    <el-input  v-model="form.bankCard"></el-input>
+                <el-form-item label="订单编号">
+                    <el-input v-model="form.orderId"></el-input>
                 </el-form-item>
             </el-form>
 
@@ -84,10 +62,10 @@ export default {
         return {
             title:"录入员工信息",
             visiable:false,
-            employees:[],
+            comment:[],
             //form用于接收数据
             form:{
-                type:"waiter"
+                type:"comment"
             }
         }
     },
@@ -97,7 +75,7 @@ export default {
     },
     methods:{
         submitHandler(){
-             let url = "http://localhost:6677/waiter/saveOrUpdate"
+             let url = "http://localhost:6677/comment/saveOrUpdate"
              //前台向后台发送请求，完成数据的保存操作
             request({
                 url,
@@ -122,15 +100,15 @@ export default {
         },
         //重载员工数据
         loadData(){
-            let url = "http://localhost:6677/waiter/findAll"
+            let url = "http://localhost:6677/comment/findAll"
             request.get(url).then((response)=>{
                 //将查询结果设置到employees中,箭头函数this指向外部函数的this
-            this.employees = response.data;
+            this.comment = response.data;
             })
         },
         toupdataHandler(row){
              this.form=row;
-            this.title="修改员工信息";
+            this.title="修改评论信息";
             this.visiable=true;
         },
 
@@ -141,7 +119,7 @@ export default {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          let url="http://localhost:6677/waiter/deleteById?id="+id;
+          let url="http://localhost:6677/comment/deleteById?id="+id;
       request.get(url).then((response)=>{
         // 刷新数据
         this.loadData();
@@ -155,9 +133,9 @@ export default {
       );
     },
         toAddHandle(){
-            this.title="录入员工信息",
+            this.title="录入评论信息",
              this.form={
-        type:"employee"
+        type:"comment"
       }
             this.visiable=true;
 },
